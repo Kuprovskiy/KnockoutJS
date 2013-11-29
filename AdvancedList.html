@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+	<title>Simple List</title>
+	<script type="text/javascript" src="knockout-3.0.0.js"></script>
+</head>
+<body>
+	<form data-bind="submit: addItem">
+		New Item: 
+		<input data-bind="value: itemToAdd, valueUpdate: 'afterkeydown'" />
+		<button type="submit" data-bind="click: xyjak, enable: (itemToAdd().length > 0)">Zaxujachit'!</button>
+		<p>Your items: </p>
+		<select multiple="multiple" size="3" data-bind="options: items, selectedOptions: selectedItems"></select>
+		<div>
+			<button data-bind="click: removeItem, enable: (selectedItems().length > 0)">Zaxujachit'!</button>
+			<button data-bind="click: sortItems, enable: (items().length > 0)">Sort</button>
+		</div>
+	</form>
+	<script type="text/javascript">
+		var ViewModel = function(items) {
+			var self = this;
+
+			self.items = ko.observableArray(items);
+			self.itemToAdd = ko.observable("");
+			//self.selectedItems = ko.observableArray(["Banana"]);
+			self.selectedItems = ko.observableArray([]);
+			self.xyjak = function() {
+				self.addItem();
+			};
+			self.addItem = function() {
+				if ((self.itemToAdd != "") && (self.items.indexOf(self.itemToAdd()) < 0)) { // prevent blanks and duplicates
+					self.items.push(self.itemToAdd());
+					self.itemToAdd("");
+				}
+			};
+			self.removeItem = function() {
+				self.items.removeAll(self.selectedItems());
+				self.selectedItems([]);
+				//self.sortItems();
+			};
+			self.sortItems = function() {
+				self.items.sort();
+			};
+		};
+		ko.applyBindings(new ViewModel(["Apple", "Pinapple", "Banana"]));
+		//var viewModel = new ViewModel(["Apple", "Pinapple", "Banana"]);
+		//ko.applyBindings(viewModel);
+		//viewModel.sortItems();
+	</script>
+</body>
+</html>
