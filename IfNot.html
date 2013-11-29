@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+	<title>Control If Not</title>
+	<script type="text/javascript" src="knockout-3.0.0.js"></script>
+</head>
+<body>
+	<h1>Example 1</h1>
+	<label>
+		<input type="checkbox" data-bind="checked: displayMessage" />
+		Hide message
+	</label>
+	<p data-bind="ifnot: displayMessage">Hey man, what's up?</p>
+
+	<h1>Example 2</h1>
+	<label>
+		<input type="checkbox" data-bind="checked: displayMessage" />
+		Hide message
+	</label>
+	<p data-bind="if: !displayMessage()">Hey man, what's up?</p>
+
+	<script type="text/javascript">
+		ko.applyBindings({
+			displayMessage: ko.observable(false),
+			planets: [
+				{name: 'Mercury', capital: null},
+				{name: 'Earth', capital: {cityName: 'Barnsley'}}
+			]
+		});
+	</script>
+</body>
+</html>

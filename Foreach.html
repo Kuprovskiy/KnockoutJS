@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<head>
+	<title>Control Foreach</title>
+	<script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="knockout-3.0.0.js"></script>
+</head>
+<body>
+	<h1>Example 1: Iterating over an array</h1>
+	<table border="1">
+	    <thead>
+	        <tr>
+	        	<th>First name</th>
+	        	<th>Last name</th>
+	        </tr>
+	    </thead>
+	    <tbody data-bind="foreach: people">
+	        <tr>
+	            <td data-bind="text: firstName"></td>
+	            <td data-bind="text: lastName"></td>
+	        </tr>
+	    </tbody>
+	</table>
+
+	<h1>Example 2: Live example with add/remove</h1>
+	<h4>People</h4>
+	<ul data-bind="foreach: people">
+	    <li>
+	        Name at position <span data-bind="text: $index"> </span>:
+	        <span data-bind="text: firstName"> </span>
+	        <a href="#" data-bind="click: $root.removePerson">Remove</a>
+	    </li>
+	</ul>
+	<button data-bind="click: addPerson">Add</button>
+
+	<h1>Example 3: Referring to each array entry using $data</h1>
+	<ul data-bind="foreach: months">
+	    <li>
+	        The current item is: <b data-bind="text: $data"></b>
+	    </li>
+	</ul>
+
+	<h1>Example 3: Using “as” to give an alias to "foreach" items</h1>
+	<ul data-bind="foreach: { data: categories, as: 'category' }">
+	    <li>
+	    	<span data-bind="text: category.name"></span>
+	        <ul data-bind="foreach: { data: items, as: 'item' }">
+	            <li>
+	                <span data-bind="text: category.name"></span>:
+	                <span data-bind="text: item"></span>
+	            </li>
+	        </ul>
+	    </li>
+	</ul>
+
+	<h1>Example 4: Using foreach without a container element</h1>
+	<ul>
+	    <li class="header">Header item</li>
+	    <!-- ko foreach: people -->
+	        <li>
+	        	Name: <span data-bind="text: $data.firstName"></span> 
+	        	<span data-bind="text: lastName"></span>
+	        </li>
+	    <!-- /ko -->
+	</ul>
+	<h1>Example 5: Post-processing or animating the generated DOM elements</h1>
+	<ul data-bind="foreach: { data: myItems, afterAdd: yellowFadeIn }">
+	    <li data-bind="text: $data"></li>
+	</ul>
+ 
+	<button data-bind="click: addItem">Add</button>
+
+	<script type="text/javascript">
+		function AppViewModel() {
+		    var self = this;
+		 
+		    self.people = ko.observableArray([
+		        { firstName: 'Bert', lastName: 'Bert' },
+		        { firstName: 'Charles', lastName: 'Charles' },
+		        { firstName: 'Denise', lastName: 'Denise' }
+		    ]);
+		    self.months = [ 'Jan', 'Feb', 'Mar', 'etc' ];
+		 
+		    self.addPerson = function() {
+		        self.people.push({ firstName: "New at " + new Date() });
+		    };
+		 
+		    self.removePerson = function() {
+		        //console.log(this);
+		        self.people.remove(this);
+		    }
+		    self.categories = ko.observableArray([
+	            { name: 'Fruit', items: [ 'Apple', 'Orange', 'Banana' ] },
+	            { name: 'Vegetables', items: [ 'Celery', 'Corn', 'Spinach' ] }
+	        ]);
+
+	        self.myItems = ko.observableArray([ 'A', 'B', 'C' ]),
+		    self.yellowFadeIn = function(element, index, data) {
+	            $(element).filter("li")
+	                      .animate({ backgroundColor: 'yellow' }, 200)
+	                      .animate({ backgroundColor: 'white' }, 800);
+	        };
+		    self.addItem = function() { this.myItems.push('New item');};
+		}
+		 
+		ko.applyBindings(new AppViewModel());
+	</script>
+</body>
+</html>
