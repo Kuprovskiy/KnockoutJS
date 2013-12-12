@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Multiple view</title>
+	<script type="text/javascript" src="scripts/knockout-3.0.0.js"></script>
+	<style type="text/css">
+		body, html {
+          height: 100%;
+          margin: 0;
+          -webkit-font-smoothing: antialiased;
+          font-weight: 100;
+          background: #aadfeb;
+          text-align: center;
+          font-family: helvetica;
+      }
+       
+      .tabs input[type=radio] {
+          position: absolute;
+          top: -9999px;
+          left: -9999px;
+      }
+      .tabs {
+        width: 650px;
+        float: none;
+        list-style: none;
+        position: relative;
+        padding: 0;
+        margin: 75px auto;
+      }
+      .tabs li {
+        float: left;
+      }
+      .tabs > li > label {
+          display: block;
+          padding: 10px 20px;
+          border-radius: 2px 2px 0 0;
+          color: #08C;
+          font-size: 24px;
+          font-weight: normal;
+          font-family: 'Lily Script One', helveti;
+          background: rgba(255,255,255,0.2);
+          cursor: pointer;
+          position: relative;
+          top: 3px;
+          -webkit-transition: all 0.2s ease-in-out;
+          -moz-transition: all 0.2s ease-in-out;
+          -o-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+      }
+      .tabs > li > label:hover {
+        background: rgba(255,255,255,0.5);
+        top: 0;
+      }
+       
+      [id^=tab]:checked + label {
+        background: #08C;
+        color: white;
+        top: 0;
+      }
+       
+      [id^=tab]:checked ~ [id^=tab-content] {
+          display: block;
+      }
+      .tab-content{
+        z-index: 2;
+        display: none;
+        text-align: left;
+        width: 100%;
+        font-size: 20px;
+        line-height: 140%;
+        padding-top: 10px;
+        background: #08C;
+        padding: 15px;
+        color: white;
+        position: absolute;
+        top: 53px;
+        left: 0;
+        box-sizing: border-box;
+        -webkit-animation-duration: 0.5s;
+        -o-animation-duration: 0.5s;
+        -moz-animation-duration: 0.5s;
+        animation-duration: 0.5s;
+      }
+	</style>
+</head>
+<body>
+	<ul class="tabs" data-bind="foreach: main.tabs">
+		<li>
+			<input type="radio" name="tabs" data-bind="attr: {'id': 'tab' + id, 'checked': isChecked}"/>
+			<label data-bind="text: label, attr: {'for': 'tab' + id}"></label>
+			<div class="tab-content animated fadeIn" data-bind="attr: {'id': 'tab-content' + id}">
+				<div data-bind="template: {name: template}"></div>
+			</div>
+        </li>
+	</ul>
+
+	<script type="text/html" id="first-step-template">
+	    <h3>Step 1</h3>
+	    <p>
+	    	<label>
+	    		First Name: 
+	    		<input data-bind="value: model.first.firstName" />
+	    	</label>
+	    </p>
+	    <p>
+	    	<label>
+	    		Last Name: 
+	    		<input data-bind="value: model.first.lastName" />
+	    	</label>
+	    </p>
+	</script>
+	<script type="text/html" id="second-step-template">
+	    <h3>Step 2</h3>
+	    <p>
+	    	Hello, <span data-bind="text: model.first.fullName"></span>, please write your data:
+	    </p>
+	    <p>
+	    	<label>
+	    		E-mail: 
+	    		<input data-bind="value: model.second.email" />
+	    	</label>
+	    </p>
+	    <p>
+	    	<label>
+	    		Skype: 
+	    		<input data-bind="value: model.second.skype" />
+	    	</label>
+	    </p>
+	</script>
+	<script type="text/html" id="third-step-template">
+	    <h3>Step 3</h3>
+	    <p>
+	    	First Name: <span data-bind="text: model.first.firstName"></span>
+	    </p>
+	    <p>
+	    	Last Name: <span data-bind="text: model.first.lastName"></span>
+	    </p>
+	    <p>
+	    	Email: <span data-bind="text: model.second.email"></span>
+	    </p>
+	    <p>
+	    	Skype: <span data-bind="text: model.second.skype"></span>
+	    </p>
+	    <p>
+	    	<button type="submit" data-bind="disable: model.third.formValid">Ok</button> 
+	    	<a href="#" data-bind="click: model.third.cancel">Cancel</a>
+	    </p>
+	</script>
+
+	<script type="text/javascript">
+		var Tab = function(data) {
+			var self = this;
+
+			self.id    = data.id;
+			self.label = data.label;
+			self.text  = data.text;
+			self.isChecked = ko.observable(data.isChecked);
+		};
+
+		var mainModel = function() {
+			var self = this;
+
+			self.tabs = ko.observableArray();
+
+			self.init = function(data) {
+				self.tabs.push({id: 1, label: 'Tab 1', text: 'Blah blah blah', template: 'first-step-template', isChecked: true});
+				self.tabs.push({id: 2, label: 'Tab 2', text: 'Blah2 blah2 blah2', template: 'second-step-template', isChecked: false});
+				self.tabs.push({id: 3, label: 'Tab 3', text: 'Blah3 blah3 blah3', template: 'third-step-template', isChecked: false});
+			};
+
+			self.init();
+		};
+
+		var firstModel = function() {
+			var self = this;
+
+			self.firstName = ko.observable("");
+			self.lastName  = ko.observable("");
+			self.fullName  = ko.computed(function() {
+				return (self.firstName().length > 0 && self.lastName().length > 0) ? self.firstName() + " " + self.lastName() : "Anonymous";
+			});
+		}
+
+		var secondModel = function() {
+			var self = this;
+
+			self.email = ko.observable("");
+			self.skype = ko.observable("");
+		}
+
+		var thirdModel = function() {
+			var self = this;
+
+			self.submit = function() {
+				alert(1);
+			};
+			self.cancel = function() {
+				model.first.firstName("");
+				model.first.lastName("");
+				model.second.email("");
+				model.second.skype("");
+				self.goToTab(1);
+			};
+			self.goToTab = function(tabId) {
+				ko.utils.arrayFirst( model.main.tabs(), function(item) {
+					if (item.id == tabId) item.isChecked = true;
+				});
+			};
+		}
+		
+		masterVM = {
+		    main   : new mainModel(),
+		    first  : new firstModel(),
+		    second : new secondModel(),
+		    third  : new thirdModel()
+		}
+
+		ko.applyBindings(model = masterVM);
+
+		model.third.formValid = ko.computed(function() {
+			//console.log(model.first.firstName().length);
+			//return true;
+		});
+	</script>
+</body>
+</html>

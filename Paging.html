@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Paging</title>
+	<script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="scripts/knockout-3.0.0.js"></script>
+	<script type="text/javascript" src="scripts/ko.pager.js"></script>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<td>ID</td>
+			<td>Name</td>
+			<td>Credits</td>
+			<td>Ages</td>
+		</tr>
+		<!-- ko foreach: people -->
+		<tr>
+			<td data-bind="text: id"></td>
+			<td data-bind="text: name"></td>
+			<td data-bind="text: credits"></td>
+			<td data-bind="text: ages"></td>
+		</tr>
+		<!-- /ko -->
+	</table>
+	<!-- ko ifnot: Pager().TotalItemCount() > 0 -->
+	<p>
+	    No results found
+	</p>
+	<!-- /ko -->
+	<!-- ko if: Pager().TotalItemCount() > 0 -->
+	<div class="pagination" data-bind="template:{ name: 'tpl-pager', data: Pager }"></div>
+	<!-- /ko -->
+	<script type="text/html" id="tpl-pager">
+	    <div class="pagexofx">
+	        <span data-bind="text: FirstItemIndex"></span>
+	        -
+	    <span data-bind="text: LastItemIndex"></span>
+	        of
+	    <strong>
+	        <span data-bind="text: TotalItemCount"></span>
+	    </strong>
+	        results
+	    </div>
+	    <ul>
+	        <!-- ko if:CurrentPage() === 1 -->
+	        <li class="disabled">
+	            <a class="disabledPage">&laquo;&laquo;</a></li>
+	        <!-- /ko -->
+	        <!-- ko ifnot:CurrentPage() === 1 -->
+	        <li>
+	            <a href="#" data-bind="click: function(){ CurrentPage(1); }">&laquo;&laquo;</a></li>
+	        <!-- /ko -->
+	        <!-- ko if:HasPrevPage -->
+	        <li>
+	            <a href="#" data-bind="click: function(){ CurrentPage(CurrentPage() - 1); }">&laquo;</a></li>
+	        <!-- /ko -->
+	        <!-- ko ifnot:HasPrevPage -->
+	        <li class="disabled">
+	            <span class="disabledPage">&laquo;</span></li>
+	        <!-- /ko -->
+	        <!-- ko foreach:Pages -->
+	        <!-- ko if:$data === $parent.CurrentPage() -->
+	        <li class="active">
+	            <span class="currentPage" data-bind="text: $data"></span>
+	        </li>
+	        <!-- /ko -->
+	        <!-- ko if:$data !== $parent.CurrentPage() -->
+	        <li>
+	            <a href="#" data-bind="text: $data, click: function(){ $parent.CurrentPage($data); }"></a>
+	        </li>
+	        <!-- /ko -->
+	        <!-- /ko -->
+	        <!-- ko if:HasNextPage -->
+	        <li>
+	            <a href="#" data-bind="click: function(){ CurrentPage(CurrentPage() + 1); }">&raquo;</a></li>
+	        <!-- /ko -->
+	        <!-- ko ifnot:HasNextPage -->
+	        <li class="disabled">
+	            <span class="disabledPage">&raquo;</span></li>
+	        <!-- /ko -->
+	        <!-- ko ifnot:CurrentPage() === LastPage() -->
+	        <li>
+	            <a href="#" data-bind="click: function(){ CurrentPage(LastPage()); }">&raquo;&raquo;</a></li>
+	        <!-- /ko -->
+	        <!-- ko if:CurrentPage() === LastPage() -->
+	        <li class="disabled">
+	            <span class="disabledPage">&raquo;&raquo;</span></li>
+	        <!-- /ko -->
+	    </ul>
+	</script>
+
+	<script type="text/javascript">
+		function MyViewModel() {
+			var self = this;
+
+			self.people = ko.observableArray();
+
+			self.limit = ko.observable(5);
+			self.offset = ko.observable(0);
+			self.sortBy = ko.observable("id");
+			self.sortOrder = ko.observable("desc");
+			self.totalResults = ko.observable(26);
+			
+			self.Pager = ko.pager(self.totalResults);
+			self.Pager().PageSize(self.limit());
+			self.Pager().CurrentPage.subscribe(function() {
+				self.populate();
+			});
+			self.populate = function() {
+				self.people([]);
+
+				var currentPage = self.Pager().CurrentPage();
+        		self.offset(  (( currentPage - 1 ) * self.limit()) );
+
+				for(var i = 0, j = self.offset(); i < self.limit(); i++, j++) {
+					self.people.push({ id: j, name: 'Franklin' + j, credits: 25 * j,  ages: 22 + j });
+				}
+			};
+			self.populate();
+	     }
+	     ko.applyBindings(new MyViewModel());
+	</script>
+</body>
+</html>

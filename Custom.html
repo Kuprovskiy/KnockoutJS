@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Creating custom bindings</title>
+	<script type="text/javascript" src="scripts/knockout-3.0.0.js"></script>
+</head>
+<body>
+	<div data-bind="yourBindingName: someValue"> </div>
+
+	<script type="text/javascript">
+		ko.bindingHandlers.yourBindingName = {
+		    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+		        // This will be called when the binding is first applied to an element
+		        // Set up any initial state, event handlers, etc. here
+		    },
+		    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+		        // This will be called once when the binding is first applied to an element,
+		        // and again whenever the associated observable changes value.
+		        // Update the DOM element based on the supplied values here.
+		    }
+		};
+	</script>
+</body>
+</html>

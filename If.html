@@ -1,7 +1,8 @@
 <!DOCTYPE html>
+<html>
 <head>
 	<title>Control If</title>
-	<script type="text/javascript" src="knockout-3.0.0.js"></script>
+	<script type="text/javascript" src="scripts/knockout-3.0.0.js"></script>
 </head>
 <body>
 	<h1>Example 1</h1>
@@ -9,7 +10,7 @@
 		<input type="checkbox" data-bind="checked: displayMessage" />
 		Display message
 	</label>
-	<p data-bind="if: displayMessage">Hey man, what's up?</p>
+	<p data-bind="visible: displayMessage"><i>Hey man, what's up?</i></p>
 	<h1>Example 2</h1>
 	<ul data-bind="foreach: planets">
 		<li>
