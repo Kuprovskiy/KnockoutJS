@@ -14,4 +14,4 @@ jobs:
       - checkout
       - run:
           name: run tests
-          command: echo 1
+          command: echo 1 | composer install
